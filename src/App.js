@@ -1,10 +1,12 @@
 import { act, useEffect, useState } from "react";
 import "./App.css";
 import proofService from "./services/proofService";
+import { AddressAutocomplete } from "./AddressAutocomplete";
 import { ethers } from "ethers";
 import axios from 'axios'; // Import axios
 
 function App() {
+  const [destinationCoords, setDestinationCoords] = useState([0, 0]);
   const [destinationAddress, setDestinationAddress] = useState("");
   const [eta, setEta] = useState("");
   const [sourceAddress, setSourceAddress] = useState("");
@@ -89,7 +91,7 @@ function App() {
       const proof = await proofService.generateProof({
         sourceLocation: [sourceLat, sourceLong],
         claimedETA: parseInt(eta),
-        actualETA: actualETA,
+        actualETA: 0,
         tolerance: 5,
       });
 
@@ -134,11 +136,11 @@ function App() {
     <div className="App">
       <div className="container">
         <div className="input-group">
-          <input
-            type="text"
-            placeholder="Enter your destination address"
-            value={destinationAddress}
-            onChange={(e) => setDestinationAddress(e.target.value)}
+          <AddressAutocomplete
+            onSelect={(address, coords) => {
+              setDestinationAddress(address);
+              setDestinationCoords(coords);
+            }}
           />
         </div>
         <div className="input-group">
