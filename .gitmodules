@@ -1,0 +1,3 @@
+[submodule "zkproof/lib/forge-std"]
+	path = zkproof/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
