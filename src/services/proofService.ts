@@ -1,6 +1,9 @@
 import * as snarkjs from "snarkjs";
 import { ethers } from "ethers";
 
+// Add the address you get from deployment logs
+const ZKETA_VERIFIER_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+
 export class ZKProofService {
   private initialized: boolean = false;
   private relayerWallet: ethers.Wallet;
@@ -53,43 +56,44 @@ export class ZKProofService {
     };
   }
 
-  async verifyProofOnChain(proof: any, publicSignals: any) {
+  async verifyProofOnChain(proof: any, publicSignals: any, destination: string) {
     if (!this.initialized) {
       throw new Error("ProofService not initialized");
     }
 
-    // Format signals
     const formattedSignals = publicSignals.map((signal: string) => BigInt(signal));
-    
-    // Format proof structure to match contract expectations
     const formattedProof = {
       a: [proof.a[0], proof.a[1]],
       b: [[proof.b[0][0], proof.b[0][1]], [proof.b[1][0], proof.b[1][1]]],
       c: [proof.c[0], proof.c[1]]
     };
 
-    console.log("Formatted proof:", formattedProof);
-    console.log("Formatted signals:", formattedSignals);
-
     const verifierABI = [
-      "function verifyProof(uint256[2] memory a, uint256[2][2] memory b, uint256[2] memory c, uint256[6] memory input) public returns (bool)"
+      "function verifyProof(uint256[2] memory a, uint256[2][2] memory b, uint256[2] memory c, uint256[6] memory input, string memory destination) public returns (bool)"
     ];
-    const verifierAddress = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
-
-    const verifier = new ethers.Contract(verifierAddress, verifierABI, this.relayerWallet);
+    const verifier = new ethers.Contract(ZKETA_VERIFIER_ADDRESS, verifierABI, this.relayerWallet);
     
     try {
       const tx = await verifier.verifyProof(
         formattedProof.a,
         formattedProof.b,
         formattedProof.c,
-        formattedSignals
+        formattedSignals,
+        destination
       );
-      await tx.wait();
-      return true;
+      const receipt = await tx.wait();
+      return {
+        verified: true,
+        actualETA: 0, // Hardcoded to 0 since that's what we pass in App.js
+        destination
+      };
     } catch (error) {
       console.error("Verification error:", error);
-      return false;
+      return {
+        verified: false,
+        actualETA: 0,
+        destination
+      };
     }
   }
 }

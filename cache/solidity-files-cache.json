@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/hitarthkhurana/Documents/ethglobal/src/contracts/ETACircuitVerifier.sol": {
-      "lastModificationDate": 1731757039591,
-      "contentHash": "5a7a52775fb5fe31da6f2a590c675473",
+      "lastModificationDate": 1731757581160,
+      "contentHash": "4b92e225fb2e28aab3ed9903439f91fa",
       "sourceName": "src/contracts/ETACircuitVerifier.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -34,12 +34,12 @@
         ">=0.7.0 <0.9.0"
       ],
       "artifacts": [
-        "Verifier"
+        "Groth16Verifier"
       ]
     },
     "/Users/hitarthkhurana/Documents/ethglobal/src/contracts/ETAVerifier.sol": {
-      "lastModificationDate": 1731757096420,
-      "contentHash": "7e518148bb8549271058fb0ab7f886d1",
+      "lastModificationDate": 1731769886052,
+      "contentHash": "bd3095b65299c8b60399b2b7ffe89a7a",
       "sourceName": "src/contracts/ETAVerifier.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -65,14 +65,12 @@
           }
         }
       },
-      "imports": [
-        "./ETACircuitVerifier.sol",
-        "@openzeppelin/contracts/access/Ownable.sol"
-      ],
+      "imports": [],
       "versionPragmas": [
         "^0.8.20"
       ],
       "artifacts": [
+        "IVerifier",
         "ZKETAVerifier"
       ]
     },

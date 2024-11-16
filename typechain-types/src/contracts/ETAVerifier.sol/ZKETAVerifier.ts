@@ -25,28 +25,11 @@ import type {
 
 export interface ZKETAVerifierInterface extends Interface {
   getFunction(
-    nameOrSignature:
-      | "owner"
-      | "renounceOwnership"
-      | "transferOwnership"
-      | "verifiedProofs"
-      | "verifier"
-      | "verifyProof"
+    nameOrSignature: "verifiedProofs" | "verifier" | "verifyProof"
   ): FunctionFragment;
 
-  getEvent(
-    nameOrSignatureOrTopic: "OwnershipTransferred" | "ProofVerified"
-  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ProofVerified"): EventFragment;
 
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [AddressLike]
-  ): string;
   encodeFunctionData(
     functionFragment: "verifiedProofs",
     values: [BytesLike]
@@ -58,19 +41,11 @@ export interface ZKETAVerifierInterface extends Interface {
       [BigNumberish, BigNumberish],
       [[BigNumberish, BigNumberish], [BigNumberish, BigNumberish]],
       [BigNumberish, BigNumberish],
-      BigNumberish[]
+      BigNumberish[],
+      string
     ]
   ): string;
 
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferOwnership",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "verifiedProofs",
     data: BytesLike
@@ -82,33 +57,29 @@ export interface ZKETAVerifierInterface extends Interface {
   ): Result;
 }
 
-export namespace OwnershipTransferredEvent {
-  export type InputTuple = [previousOwner: AddressLike, newOwner: AddressLike];
-  export type OutputTuple = [previousOwner: string, newOwner: string];
-  export interface OutputObject {
-    previousOwner: string;
-    newOwner: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
 export namespace ProofVerifiedEvent {
   export type InputTuple = [
     proofHash: BytesLike,
     verifier: AddressLike,
+    destination: string,
+    actualETA: BigNumberish,
+    verified: boolean,
     timestamp: BigNumberish
   ];
   export type OutputTuple = [
     proofHash: string,
     verifier: string,
+    destination: string,
+    actualETA: bigint,
+    verified: boolean,
     timestamp: bigint
   ];
   export interface OutputObject {
     proofHash: string;
     verifier: string;
+    destination: string;
+    actualETA: bigint;
+    verified: boolean;
     timestamp: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
@@ -160,16 +131,6 @@ export interface ZKETAVerifier extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  owner: TypedContractMethod<[], [string], "view">;
-
-  renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
-
-  transferOwnership: TypedContractMethod<
-    [newOwner: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-
   verifiedProofs: TypedContractMethod<[arg0: BytesLike], [boolean], "view">;
 
   verifier: TypedContractMethod<[], [string], "view">;
@@ -179,7 +140,8 @@ export interface ZKETAVerifier extends BaseContract {
       a: [BigNumberish, BigNumberish],
       b: [[BigNumberish, BigNumberish], [BigNumberish, BigNumberish]],
       c: [BigNumberish, BigNumberish],
-      input: BigNumberish[]
+      input: BigNumberish[],
+      destination: string
     ],
     [boolean],
     "nonpayable"
@@ -189,15 +151,6 @@ export interface ZKETAVerifier extends BaseContract {
     key: string | FunctionFragment
   ): T;
 
-  getFunction(
-    nameOrSignature: "owner"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "renounceOwnership"
-  ): TypedContractMethod<[], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "transferOwnership"
-  ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "verifiedProofs"
   ): TypedContractMethod<[arg0: BytesLike], [boolean], "view">;
@@ -211,19 +164,13 @@ export interface ZKETAVerifier extends BaseContract {
       a: [BigNumberish, BigNumberish],
       b: [[BigNumberish, BigNumberish], [BigNumberish, BigNumberish]],
       c: [BigNumberish, BigNumberish],
-      input: BigNumberish[]
+      input: BigNumberish[],
+      destination: string
     ],
     [boolean],
     "nonpayable"
   >;
 
-  getEvent(
-    key: "OwnershipTransferred"
-  ): TypedContractEvent<
-    OwnershipTransferredEvent.InputTuple,
-    OwnershipTransferredEvent.OutputTuple,
-    OwnershipTransferredEvent.OutputObject
-  >;
   getEvent(
     key: "ProofVerified"
   ): TypedContractEvent<
@@ -233,18 +180,7 @@ export interface ZKETAVerifier extends BaseContract {
   >;
 
   filters: {
-    "OwnershipTransferred(address,address)": TypedContractEvent<
-      OwnershipTransferredEvent.InputTuple,
-      OwnershipTransferredEvent.OutputTuple,
-      OwnershipTransferredEvent.OutputObject
-    >;
-    OwnershipTransferred: TypedContractEvent<
-      OwnershipTransferredEvent.InputTuple,
-      OwnershipTransferredEvent.OutputTuple,
-      OwnershipTransferredEvent.OutputObject
-    >;
-
-    "ProofVerified(bytes32,address,uint256)": TypedContractEvent<
+    "ProofVerified(bytes32,address,string,uint256,bool,uint256)": TypedContractEvent<
       ProofVerifiedEvent.InputTuple,
       ProofVerifiedEvent.OutputTuple,
       ProofVerifiedEvent.OutputObject

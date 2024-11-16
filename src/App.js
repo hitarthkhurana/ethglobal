@@ -67,35 +67,20 @@ function App() {
 
       console.log("8. Proof generated:", proof);
 
-      const data = {
-        sourceAddress,
-        destinationAddress,
-        claimedETA: eta,
-        actualETA: actualETA.toString(),
-        verified: proof.verified
-      };
-
-      console.log("9. Final result:", data);
-
-      // Connect to wallet
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      await provider.send("eth_requestAccounts", []);
-      const signer = await provider.getSigner();
-
-      console.log("Public signals:", proof.publicSignals);
-      const verified = await proofService.verifyProofOnChain(
+      const verificationResult = await proofService.verifyProofOnChain(
         proof.proof,
         proof.publicSignals,
-        signer
+        destinationAddress
       );
 
       setResult({
-        ...data,
-        verified
+        destination: verificationResult.destination,
+        actualETA: verificationResult.actualETA,
+        verified: verificationResult.verified
       });
 
     } catch (error) {
-      console.error("ERROR in zkproof generation:", error);
+      console.error("ERROR:", error);
       alert('Error: ' + error.message);
     } finally {
       setLoading(false);
@@ -132,7 +117,7 @@ function App() {
         {result && (
           <div className="result">
             <h3>Verification Result:</h3>
-            <p>Claimed ETA: {result.claimedETA} minutes</p>
+            <p>Destination: {result.destination}</p>
             <p>Actual ETA: {result.actualETA} minutes</p>
             <p>Verified: {result.verified ? '✅' : '❌'}</p>
           </div>

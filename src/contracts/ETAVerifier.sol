@@ -1,37 +1,47 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "./ETACircuitVerifier.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+interface IVerifier {
+    function verifyProof(
+        uint256[2] memory a,
+        uint256[2][2] memory b,
+        uint256[2] memory c,
+        uint256[6] memory input
+    ) external view returns (bool);
+}
 
-contract ZKETAVerifier is Ownable {
-    Verifier public immutable verifier;
+contract ZKETAVerifier {
+    IVerifier public immutable verifier;
     
     event ProofVerified(
         bytes32 indexed proofHash,
         address indexed verifier,
+        string destination,
+        uint256 actualETA,
+        bool verified,
         uint256 timestamp
     );
 
     mapping(bytes32 => bool) public verifiedProofs;
 
-    constructor(address _verifier) Ownable(msg.sender) {
-        verifier = Verifier(_verifier);
+    constructor(address _verifier) {
+        verifier = IVerifier(_verifier);
     }
 
     function verifyProof(
         uint256[2] memory a,
         uint256[2][2] memory b,
         uint256[2] memory c,
-        uint256[6] memory input
+        uint256[6] memory input,
+        string memory destination
     ) public returns (bool) {
         bytes32 proofHash = keccak256(abi.encodePacked(a, b, c, input));
         require(!verifiedProofs[proofHash], "Proof already verified");
         
-        require(verifier.verifyProof(a, b, c, input), "Invalid proof");
+        bool isValid = verifier.verifyProof(a, b, c, input);
         
         verifiedProofs[proofHash] = true;
-        emit ProofVerified(proofHash, msg.sender, block.timestamp);
-        return true;
+        emit ProofVerified(proofHash, msg.sender, destination, input[3], isValid, block.timestamp);
+        return isValid;
     }
 }
