@@ -1,0 +1,151 @@
+.App {
+  text-align: center;
+  min-height: 100vh;
+  background-color: var(--tg-theme-bg-color, #1a1a1a);
+  color: var(--tg-theme-text-color, #ffffff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.container {
+  width: 100%;
+  max-width: 300px;
+  padding: 20px;
+}
+
+.input-group {
+  margin: 10px 0;
+  width: 100%;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #30ff30;
+  border-radius: 8px;
+  background: rgba(0, 255, 0, 0.1);
+  color: #fff;
+  font-size: 16px;
+}
+
+input:focus {
+  outline: none;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+
+.neon-button {
+  margin-top: 20px;
+  padding: 15px 40px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #000;
+  background-color: #00ff00;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 0 10px #00ff00,
+    0 0 20px #00ff00,
+    0 0 40px #00ff00;
+}
+
+.neon-button:hover {
+  background-color: #00ff00;
+  box-shadow: 
+    0 0 20px #00ff00,
+    0 0 40px #00ff00,
+    0 0 80px #00ff00;
+  transform: translateY(-2px);
+}
+
+.messaging-container {
+  margin-top: 20px;
+  padding: 20px;
+  background: rgba(0, 255, 0, 0.05);
+  border-radius: 8px;
+  border: 1px solid #30ff30;
+}
+
+.connect-button {
+  background: #00ff00;
+  color: black;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.recipient-input {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.messages-list {
+  height: 200px;
+  overflow-y: auto;
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid rgba(0, 255, 0, 0.3);
+  border-radius: 8px;
+}
+
+.message {
+  padding: 8px;
+  margin: 4px 0;
+  border-radius: 8px;
+  max-width: 80%;
+}
+
+.sent {
+  background: rgba(0, 255, 0, 0.2);
+  margin-left: auto;
+}
+
+.received {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.message-input {
+  display: flex;
+  gap: 10px;
+}
