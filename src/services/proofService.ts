@@ -1,5 +1,6 @@
 import * as snarkjs from "snarkjs";
 import { ethers } from "ethers";
+import { NETWORKS } from "../networks";
 
 // Use Zircuit testnet by default
 const NETWORK = NETWORKS.zircuitTestnet;
