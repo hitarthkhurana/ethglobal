@@ -1,19 +1,18 @@
 import * as snarkjs from "snarkjs";
 import { ethers } from "ethers";
+import { NETWORKS } from '../networks';
 
-// Add the address you get from deployment logs
-const ZKETA_VERIFIER_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+// Use Zircuit testnet by default
+const NETWORK = NETWORKS.zircuitTestnet;
+const ZKETA_VERIFIER_ADDRESS = NETWORK.verifierAddress;
 
 export class ZKProofService {
   private initialized: boolean = false;
   private relayerWallet: ethers.Wallet;
 
   async init() {
-    // For local development, use hardcoded values if env vars are not set
-    const infuraUrl = process.env.REACT_APP_INFURA_URL ;
-    const privateKey = process.env.REACT_APP_RELAYER_PRIVATE_KEY  // Default hardhat account
-
-    const provider = new ethers.JsonRpcProvider(infuraUrl);
+    const privateKey = process.env.REACT_APP_RELAYER_PRIVATE_KEY!;
+    const provider = new ethers.JsonRpcProvider(NETWORK.rpcUrl);
     this.relayerWallet = new ethers.Wallet(privateKey, provider);
     this.initialized = true;
   }
@@ -79,7 +78,12 @@ export class ZKProofService {
         formattedProof.b,
         formattedProof.c,
         formattedSignals,
-        destination
+        destination,
+        {
+          gasLimit: 3000000, // Increase gas limit
+          maxFeePerGas: ethers.parseUnits("10", "gwei"), // Adjust gas price
+          maxPriorityFeePerGas: ethers.parseUnits("2", "gwei")
+        }
       );
       const receipt = await tx.wait();
       return {
