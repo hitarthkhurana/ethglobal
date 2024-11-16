@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import proofService from './services/proofService';
 import { ethers } from "ethers";
+import axios from 'axios'; // Import axios
 
 function App() {
   const [destinationAddress, setDestinationAddress] = useState('');
@@ -78,6 +79,20 @@ function App() {
         actualETA: verificationResult.actualETA,
         verified: verificationResult.verified
       });
+      // Trigger the Python backend to send a Telegram message if verified
+      console.log("Triggering Python backend to send Telegram message...");
+      
+      // Send a POST request to the Python backend
+      await axios.post('http://localhost:5001/trigger-telegram-message', {
+        verified: verificationResult.verified,
+        destination: destinationAddress
+      })
+      .then(response => {
+        console.log("Telegram bot response:", response.data);
+      })
+      .catch(error => {
+        console.error("Error triggering Python backend:", error);
+      });
 
     } catch (error) {
       console.error("ERROR:", error);
@@ -86,6 +101,7 @@ function App() {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="App">
