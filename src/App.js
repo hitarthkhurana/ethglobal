@@ -62,50 +62,33 @@ function App() {
       }
       const [destLat, destLong] = destCoords.map(Number);
 
-      console.log("2. Current location:", sourceCoords);
-      console.log("3. Destination:", destCoords);
+      console.log("2. Current location:", sourceAddress);
+      console.log("3. Destination:", destinationAddress);
       console.log("4. Claimed ETA:", eta, "minutes");
 
-      // Get actual ETA from OpenRouteService
-      const response = await fetch(
-        "https://api.openrouteservice.org/v2/matrix/driving-car",
-        {
-          method: "POST",
-          headers: {
-            Accept:
-              "application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8",
-            "Content-Type": "application/json",
-            Authorization:
-              "5b3ce3597851110001cf6248f6a80aa9f7184e35b34439bb3a5586e1",
-          },
-          body: JSON.stringify({
-            locations: [
-              [sourceLong, sourceLat],
-              [destLong, destLat],
-            ],
-          }),
-        }
-      );
+      // Get actual ETA from OSRM
+      const osrmUrl = `http://router.project-osrm.org/route/v1/driving/${sourceLong},${sourceLat};${destLong},${destLat}`;
+      const response = await fetch(osrmUrl);
 
       if (!response.ok) {
-        throw new Error("Failed to fetch ETA from OpenRouteService");
+        throw new Error("Failed to fetch ETA from OSRM");
       }
 
       const data = await response.json();
-      const actualETA = Math.round(data.durations[0][1] / 60); // Convert seconds to minutes
+      if (!data.routes || !data.routes[0]) {
+        throw new Error("No route found");
+      }
 
+      const actualETA = Math.round(data.routes[0].duration / 60); // Convert seconds to minutes
       console.log("5. Actual ETA from API:", actualETA, "minutes");
 
       await proofService.init();
 
       console.log("6. Generating zkproof...");
-
-      console.log(parseInt(actualETA));
-      console.log(12171);
       const proof = await proofService.generateProof({
         sourceLocation: [sourceLat, sourceLong],
         claimedETA: parseInt(eta),
-        actualETA: 999,
+        actualETA: actualETA,
         tolerance: 5,
       });
 
@@ -116,8 +99,6 @@ function App() {
         proof.publicSignals,
         destinationAddress
       );
-
-      console.log("verificationResult >>> ", verificationResult);
 
       setResult({
         destination: verificationResult.destination,
