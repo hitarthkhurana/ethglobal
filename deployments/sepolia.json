@@ -1,0 +1,7 @@
+{
+  "network": "sepolia",
+  "chainId": 11155111,
+  "ETACircuitVerifier": "0x12Fe3C913fdf286443d2fA5F0b7df6B60969D6bE",
+  "ZKETAVerifier": "0xb0b459a61abc8f816b9da1402B4119DD631e0A39",
+  "timestamp": "2024-11-16T16:10:02.598Z"
+}
