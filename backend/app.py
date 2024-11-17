@@ -18,7 +18,7 @@ def trigger_telegram_message():
     if data.get('verified'):
         try:
             # Telegram bot message
-            msg = f"Verification was successful. The ETA is accurate. ✅ The destination address was {data.get('destination')}"
+            msg = f"Verification was successful. The ETA is accurate. ✅ Location: {data.get('destination')}"
             url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id={CHAT_ID}&text={msg}"
             
             # Send the Telegram message
@@ -31,7 +31,7 @@ def trigger_telegram_message():
     else:
         try:
             # Telegram bot message
-            msg = f"Verification was Unsuccessful. The ETA is inaccurate. ❌ The destination address was {data.get('destination')}"
+            msg = f"Verification was Unsuccessful. The ETA is inaccurate. ❌ Location: {data.get('destination')}"
             url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id={CHAT_ID}&text={msg}"
             
             # Send the Telegram message

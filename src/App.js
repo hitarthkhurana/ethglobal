@@ -13,6 +13,8 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const [actualApiEta, setActualApiEta] = useState(null);
+  const [destinationName, setDestinationName] = useState("");
 
   useEffect(() => {
     // Get location automatically when app loads
@@ -80,6 +82,7 @@ function App() {
 
       const actualETA = Math.round(data.routes[0].duration / 60); // Convert seconds to minutes
       console.log("5. Actual ETA from API:", actualETA, "minutes");
+      setActualApiEta(actualETA);
 
       await proofService.init();
 
@@ -111,7 +114,7 @@ function App() {
       // Send a POST request to the Python backend
       await axios.post('http://localhost:5001/trigger-telegram-message', {
         verified: verificationResult.verified,
-        destination: destinationAddress
+        destination: destinationName
       })
       .then(response => {
         console.log("Telegram bot response:", response.data);
@@ -134,9 +137,10 @@ function App() {
       <div className="container">
         <div className="input-group">
           <AddressAutocomplete
-            onSelect={(address, coords) => {
+            onSelect={(address, coords, displayName) => {
               setDestinationAddress(address);
               setDestinationCoords(coords);
+              setDestinationName(displayName);
             }}
           />
         </div>
@@ -160,8 +164,9 @@ function App() {
           <div className="result">
             <h3>Verification Result:</h3>
             <p>Destination: {result.destination}</p>
-            <p>Actual ETA: {result.actualETA} minutes</p>
-            <p>Verified: {result.verified ? "✅" : "❌"}</p>
+            <p>Your Claimed ETA: {eta} minutes</p>
+            <p>Actual Route ETA: {actualApiEta} minutes</p>
+            <p>Verification Status: {result.verified ? "✅" : "❌"}</p>
           </div>
         )}
         {error && (
