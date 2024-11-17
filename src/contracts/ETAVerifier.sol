@@ -6,7 +6,7 @@ interface IVerifier {
         uint256[2] memory a,
         uint256[2][2] memory b,
         uint256[2] memory c,
-        uint256[6] memory input
+        uint256[3] memory input
     ) external view returns (bool);
 }
 
@@ -32,7 +32,7 @@ contract ZKETAVerifier {
         uint256[2] memory a,
         uint256[2][2] memory b,
         uint256[2] memory c,
-        uint256[6] memory input,
+        uint256[3] memory input,
         string memory destination
     ) public returns (bool) {
         bytes32 proofHash = keccak256(abi.encodePacked(a, b, c, input));
@@ -41,7 +41,7 @@ contract ZKETAVerifier {
         bool isValid = verifier.verifyProof(a, b, c, input);
         
         verifiedProofs[proofHash] = true;
-        emit ProofVerified(proofHash, msg.sender, destination, input[3], isValid, block.timestamp);
+        emit ProofVerified(proofHash, msg.sender, destination, input[2], isValid, block.timestamp);
         return isValid;
     }
 }

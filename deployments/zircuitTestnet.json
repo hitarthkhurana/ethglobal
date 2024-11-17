@@ -1,7 +1,7 @@
 {
   "network": "zircuitTestnet",
   "chainId": 48899,
-  "ETACircuitVerifier": "0xbA04BCe2c87AB3a70529f3032a4C904Aaa179f97",
-  "ZKETAVerifier": "0x2692Aa1d5B18deD1a579Ad4f23674134C3EEbEd7",
-  "timestamp": "2024-11-16T16:11:49.598Z"
+  "ETACircuitVerifier": "0x5a39234E3f8dA60090Ed91B3E4f6D639282304ed",
+  "ZKETAVerifier": "0x4eF81a04F4ca71604463D2072bd0E8D88029e89F",
+  "timestamp": "2024-11-16T23:54:13.131Z"
 }

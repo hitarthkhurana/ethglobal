@@ -20,11 +20,13 @@ async function main() {
     try {
         const circuitsDir = path.join(process.cwd(), 'src/circuits');
         const buildDir = path.join(process.cwd(), 'build/circuits');
+        const publicDir = path.join(process.cwd(), 'public/build/circuits');
         const contractsDir = path.join(process.cwd(), 'src/contracts');
         const circomLibDir = path.join(process.cwd(), 'node_modules/circomlib/circuits');
 
-        // Create build directory
+        // Create build directories
         fs.mkdirSync(buildDir, { recursive: true });
+        fs.mkdirSync(publicDir, { recursive: true });
 
         // Download Powers of Tau file
         const ptauPath = path.join(buildDir, 'pot12_final.ptau');
@@ -43,6 +45,13 @@ async function main() {
             "Failed to compile circuit"
         );
 
+        // Copy WASM files to public directory
+        console.log("Copying WASM files to public directory...");
+        const wasmDir = path.join(buildDir, 'ETACircuit_js');
+        if (fs.existsSync(wasmDir)) {
+            fs.cpSync(wasmDir, path.join(publicDir, 'ETACircuit_js'), { recursive: true });
+        }
+
         // Generate proving key
         console.log("Generating proving key...");
         await executeCommand(
@@ -50,18 +59,17 @@ async function main() {
             "Failed to generate proving key"
         );
 
+        // Copy zkey file to public directory
+        fs.copyFileSync(
+            path.join(buildDir, 'ETACircuit_0000.zkey'),
+            path.join(publicDir, 'ETACircuit_0000.zkey')
+        );
+
         // Generate Solidity verifier
         console.log("Generating Solidity verifier...");
         await executeCommand(
             `snarkjs zkey export solidityverifier ${buildDir}/ETACircuit_0000.zkey ${contractsDir}/ETACircuitVerifier.sol`,
             "Failed to generate Solidity verifier"
-        );
-
-        // Export verification key
-        console.log("Exporting verification key...");
-        await executeCommand(
-            `snarkjs zkey export verificationkey ${buildDir}/ETACircuit_0000.zkey ${buildDir}/verification_key.json`,
-            "Failed to export verification key"
         );
 
         console.log("Circuit compilation complete!");

@@ -12,6 +12,7 @@ function App() {
   const [sourceAddress, setSourceAddress] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     // Get location automatically when app loads
@@ -46,13 +47,8 @@ function App() {
 
       // Parse source coordinates
       const sourceCoords = sourceAddress.split(",").map((s) => s.trim());
-      if (
-        sourceCoords.length !== 2 ||
-        sourceCoords.some((c) => isNaN(Number(c)))
-      ) {
-        throw new Error(
-          'Invalid source coordinates format. Please use "latitude,longitude"'
-        );
+      if (sourceCoords.length !== 2 || sourceCoords.some((c) => isNaN(Number(c)))) {
+        throw new Error('Invalid source coordinates format. Please use "latitude,longitude"');
       }
       const [sourceLat, sourceLong] = sourceCoords.map(Number);
 
@@ -89,9 +85,10 @@ function App() {
 
       console.log("6. Generating zkproof...");
       const proof = await proofService.generateProof({
-        sourceLocation: [sourceLat, sourceLong],
+        sourceLatitude: sourceLat,
+        sourceLongitude: sourceLong,
         claimedETA: parseInt(eta),
-        actualETA: 0,
+        actualETA: actualETA,
         tolerance: 5,
       });
 
@@ -106,7 +103,7 @@ function App() {
       setResult({
         destination: verificationResult.destination,
         actualETA: verificationResult.actualETA,
-        verified: verificationResult.verified,
+        verified: verificationResult.verified && Math.abs(verificationResult.actualETA - parseInt(eta)) <= 5,
       });
       // Trigger the Python backend to send a Telegram message if verified
       console.log("Triggering Python backend to send Telegram message...");
@@ -125,7 +122,7 @@ function App() {
 
     } catch (error) {
       console.error("ERROR:", error);
-      alert("Error: " + error.message);
+      setError(error.message);
     } finally {
       setLoading(false);
     }
@@ -165,6 +162,12 @@ function App() {
             <p>Destination: {result.destination}</p>
             <p>Actual ETA: {result.actualETA} minutes</p>
             <p>Verified: {result.verified ? "✅" : "❌"}</p>
+          </div>
+        )}
+        {error && (
+          <div className="error">
+            <h3>Error:</h3>
+            <p>{error}</p>
           </div>
         )}
       </div>

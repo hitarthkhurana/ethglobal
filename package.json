@@ -21,7 +21,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "compile:circuit": "ts-node --project tsconfig.json scripts/compile-circuit.ts",
+    "clean:circuit": "rm -rf build/circuits public/build/circuits",
+    "compile:circuit": "npm run clean:circuit && ts-node --project tsconfig.json scripts/compile-circuit.ts",
     "compile": "hardhat compile",
     "deploy:contracts": "hardhat run scripts/deploy.ts --network localhost",
     "node": "hardhat node",

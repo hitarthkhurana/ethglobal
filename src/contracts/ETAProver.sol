@@ -12,7 +12,7 @@ contract ETAProver {
         uint256[2] a;
         uint256[2][2] b;
         uint256[2] c;
-        uint256[6] input; // [sourceLatitude, sourceLongitude, claimedETA, actualETA, tolerance]
+        uint256[6] input; // [claimedETA, actualETA, tolerance]
     }
 
     mapping(bytes32 => bool) public proofs;
