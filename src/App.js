@@ -66,7 +66,7 @@ function App() {
       console.log("4. Claimed ETA:", eta, "minutes");
 
       // Get actual ETA from OSRM
-      const osrmUrl = `http://router.project-osrm.org/route/v1/driving/${sourceLong},${sourceLat};${destLong},${destLat}`;
+      const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${sourceLong},${sourceLat};${destLong},${destLat}`;
       const response = await fetch(osrmUrl);
 
       if (!response.ok) {
